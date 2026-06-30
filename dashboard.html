@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo-Rainbow Smart Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: rgba(0, 0, 0, 0.2);
+            --text-main: #ffffff;
+            --text-muted: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            background-size: 400% 400%;
+            animation: rainbowFlow 15s ease infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        @keyframes rainbowFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Particles Background Effect */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.3)"/></svg>') repeat;
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            z-index: 1;
+            padding: 1rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 var(--glass-shadow);
+        }
+
+        .header h1 {
+            font-weight: 800;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .clock {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            z-index: 1;
+        }
+
+        /* Glass Card Style */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px 0 var(--glass-shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Glow effects based on status */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .icon-wrapper {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: 0.3s;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .pin-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px currentColor;
+            transition: 0.3s;
+        }
+
+        /* Status Colors */
+        .status-on {
+            background: #00e676;
+            color: #fff;
+            box-shadow: 0 0 20px #00e676;
+        }
+
+        .status-off {
+            background: #ff1744;
+            color: #fff;
+            box-shadow: 0 0 20px #ff1744;
+        }
+
+        .status-active {
+            background: #00b0ff;
+            color: #fff;
+            box-shadow: 0 0 20px #00b0ff;
+        }
+
+        .card:hover .icon-wrapper {
+            transform: scale(1.1);
+        }
+
+        .type-led .icon-wrapper {
+            color: #fff;
+        }
+
+        .type-sensor .icon-wrapper {
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="particles"></div>
+
+    <header class="header">
+        <h1><i class="fa-solid fa-chart-pie"></i> Ultra Smart Dashboard</h1>
+        <div class="clock" id="clock">00:00:00</div>
+    </header>
+
+    <div class="dashboard-container" id="dashboard-container">
+    </div>
+
+    <script>
+        // ข้อมูล JSON จากระบบ
+        const apiData = {
+            "success": true,
+            "count": 5,
+            "data": [
+                {
+                    "id": "1",
+                    "device_name": "LED1",
+                    "device_type": "LED",
+                    "pin": "13",
+                    "status": "ON",
+                    "created_at": "2026-06-30 10:16:41"
+                },
+                {
+                    "id": "2",
+                    "device_name": "LED2",
+                    "device_type": "LED",
+                    "pin": "12",
+                    "status": "OFF",
+                    "created_at": "2026-06-30 10:16:41"
+                },
+                {
+                    "id": "3",
+                    "device_name": "Temperature",
+                    "device_type": "SENSOR",
+                    "pin": "34",
+                    "status": "ACTIVE",
+                    "created_at": "2026-06-30 10:16:41"
+                },
+                {
+                    "id": "4",
+                    "device_name": "Humidity",
+                    "device_type": "SENSOR",
+                    "pin": "35",
+                    "status": "ACTIVE",
+                    "created_at": "2026-06-30 10:16:41"
+                },
+                {
+                    "id": "5",
+                    "device_name": "Soil Moisture",
+                    "device_type": "SENSOR",
+                    "pin": "36",
+                    "status": "ACTIVE",
+                    "created_at": "2026-06-30 10:16:41"
+                }
+            ]
+        };
+
+        // ฟังก์ชันเลือกไอคอนตามชื่อหรือประเภทอุปกรณ์
+        function getIcon(name, type) {
+            const n = name.toLowerCase();
+            if (n.includes('temp')) return 'fa-temperature-high';
+            if (n.includes('humid')) return 'fa-droplet';
+            if (n.includes('soil')) return 'fa-seedling';
+            if (type === 'LED') return 'fa-lightbulb';
+            return 'fa-microchip';
+        }
+
+        // ฟังก์ชันสร้าง UI 
+        function renderDashboard() {
+            const container = document.getElementById('dashboard-container');
+            container.innerHTML = '';
+
+            if (apiData.success && apiData.data) {
+                apiData.data.forEach(device => {
+                    const card = document.createElement('div');
+                    card.className = `card type-${device.device_type.toLowerCase()}`;
+
+                    const iconClass = getIcon(device.device_name, device.device_type);
+                    const statusClass = `status-${device.status.toLowerCase()}`;
+
+                    // หากเป็น LED ที่สถานะ ON ให้ไฟไอคอนสว่าง
+                    const iconColor = (device.device_type === 'LED' && device.status === 'ON') ? 'text-shadow: 0 0 15px #fff; color: #fff;' : '';
+
+                    card.innerHTML = `
+                        <div class="icon-wrapper" style="${iconColor}">
+                            <i class="fa-solid ${iconClass}"></i>
+                        </div>
+                        <h3>${device.device_name}</h3>
+                        <div class="pin-info">PIN: ${device.pin} | TYPE: ${device.device_type}</div>
+                        <div class="status-badge ${statusClass}">
+                            ${device.status}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        // อัปเดตนาฬิกา
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('th-TH');
+            document.getElementById('clock').textContent = timeString;
+        }
+
+        // เริ่มต้นการทำงาน
+        renderDashboard();
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+
+</html>
